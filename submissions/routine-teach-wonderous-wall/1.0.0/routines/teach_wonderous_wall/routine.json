@@ -1,0 +1,193 @@
+{
+  "$schema": "ocsd-routine-v2",
+  "schema_version": 2,
+  "name": "teach_wonderous_wall",
+  "version": "1.0.0",
+  "description": "Wonderous (Flutter web): open the Great Wall of China details and read its heading (era and place)",
+  "author": "ai-worker3",
+  "author_display": null,
+  "created_at": "2026-10-24T23:40:41.110020+00:00",
+  "updated_at": "2026-10-24T23:40:41.110028+00:00",
+  "category": "other",
+  "tags": [],
+  "programs": [],
+  "platform": "ubuntu",
+  "theme": null,
+  "start_from": "app",
+  "resolution": [
+    1920,
+    1080
+  ],
+  "window": {
+    "title_re": "Wonderous$",
+    "process": null,
+    "launch": null,
+    "rect": {
+      "x": 199,
+      "y": 78,
+      "w": 1282,
+      "h": 827
+    },
+    "dpi_scale": 1.0
+  },
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "heading",
+      "type": "text",
+      "from_step": "t1",
+      "description": "the text of 'LONGEST STRUCTURE ON EARTH the Great Wall CHINA 700 BCE to 1644 CE'"
+    }
+  ],
+  "steps": [
+    {
+      "step_index": 0,
+      "node_id": "t0",
+      "kind": "element",
+      "element_type": "button",
+      "label": "Explore details about The Great Wall.",
+      "caption": "",
+      "confidence": 0.0,
+      "action": "click",
+      "bbox": {
+        "x": 815,
+        "y": 796,
+        "w": 50,
+        "h": 80
+      },
+      "bbox_pct": {
+        "x_pct": 0.4244791666666667,
+        "y_pct": 0.737037037037037,
+        "w_pct": 0.026041666666666668,
+        "h_pct": 0.07407407407407407
+      },
+      "region_hint": "bottom_center",
+      "anchors": {
+        "visual_match": "snippets/t0.png",
+        "ocr_text": "Explore details about The Great Wall.",
+        "position_pct": {
+          "x_pct": 0.4375,
+          "y_pct": 0.774074074074074
+        },
+        "region_hint": "bottom_center",
+        "window_pct": {
+          "x_pct": 0.5,
+          "y_pct": 0.91657
+        },
+        "dpi_scale": 1.0
+      },
+      "snippet_path": "snippets/t0.png",
+      "snippet_variants": [],
+      "context_crop_path": "snippets/t0_context.png",
+      "embedding_path": null,
+      "window": null,
+      "dry_run_passed": true,
+      "input_ref": null,
+      "verify_shape_only": [],
+      "timing": {
+        "recorded_at_ms": 1792885216719,
+        "gap_ms": null
+      },
+      "pre": {
+        "window_title": "Wonderous",
+        "uia_focus": {
+          "control_type": "group",
+          "name": "previous next"
+        },
+        "changed_region": null,
+        "snippet_path": null,
+        "status_strip_phash": "88a2081966ddf57f",
+        "ignore_regions": [],
+        "header_text": null
+      },
+      "post": {
+        "window_title": "Wonderous",
+        "uia_focus": {
+          "control_type": "group",
+          "name": "facts and history back to wonder selection information and history: tab 1 of 4 photo gallery: tab 2 of 4 artifacts: tab 3 of 4 events: tab 4 of 4 back the great wall"
+        },
+        "changed_region": {
+          "dx": -641,
+          "dy": -740,
+          "w": 1282,
+          "h": 808
+        },
+        "snippet_path": "snippets/post_t0.png",
+        "status_strip_phash": "ff80a05f5f77a080",
+        "ignore_regions": [],
+        "header_text": null
+      },
+      "locate_stats": {
+        "last_method": null,
+        "method_wins": {}
+      }
+    },
+    {
+      "step_index": 1,
+      "node_id": "t1",
+      "kind": "element",
+      "element_type": "text",
+      "label": "LONGEST STRUCTURE ON EARTH the Great Wall CHINA 700 BCE to 1644 CE",
+      "caption": "",
+      "confidence": 0.0,
+      "action": "read_text",
+      "bbox": {
+        "x": 270,
+        "y": 380,
+        "w": 359,
+        "h": 11
+      },
+      "bbox_pct": {
+        "x_pct": 0.140625,
+        "y_pct": 0.35185185185185186,
+        "w_pct": 0.18697916666666667,
+        "h_pct": 0.010185185185185186
+      },
+      "region_hint": "center_left",
+      "anchors": {
+        "visual_match": "snippets/t1.png",
+        "ocr_text": "LONGEST STRUCTURE ON EARTH the Great Wall CHINA 700 BCE to 1644 CE",
+        "position_pct": {
+          "x_pct": 0.23385416666666667,
+          "y_pct": 0.35648148148148145
+        },
+        "region_hint": "center_left",
+        "uia": {
+          "name": "LONGEST STRUCTURE ON EARTH the Great Wall CHINA 700 BCE to 1644 CE",
+          "control_type": "text"
+        },
+        "window_pct": {
+          "x_pct": 0.19501,
+          "y_pct": 0.37122
+        },
+        "dpi_scale": 1.0
+      },
+      "snippet_path": "snippets/t1.png",
+      "snippet_variants": [],
+      "context_crop_path": "snippets/t1_context.png",
+      "embedding_path": null,
+      "window": null,
+      "dry_run_passed": true,
+      "input_ref": null,
+      "verify_shape_only": [],
+      "timing": {
+        "recorded_at_ms": 1792885241009,
+        "gap_ms": 24290
+      },
+      "pre": null,
+      "post": null,
+      "locate_stats": {
+        "last_method": null,
+        "method_wins": {}
+      },
+      "output_name": "heading"
+    }
+  ],
+  "graph": {
+    "skill_id": "",
+    "nodes": [],
+    "edges": []
+  },
+  "checksum": "e760d84414e7375e0c87b1b7bd3ca406c81c0a8843ca0ad28a862d622d6a52b9",
+  "signature": null
+}
