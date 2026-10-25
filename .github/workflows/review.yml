@@ -1,0 +1,72 @@
+# Checks every pull request that adds a submission or edits a published package:
+# the author's signature, every file hash, the secret and PII scanner, routine integrity,
+# and that the folder sits where its manifest says. The result is posted on the pull request
+# (and in the run summary, which also works for pull requests from forks).
+name: review
+
+on:
+  pull_request:
+    paths:
+      - "submissions/**"
+      - "packages/**"
+
+permissions:
+  contents: read
+  pull-requests: write
+
+env:
+  # Where the Muscle Memory code comes from. Change these if the source repo moves.
+  # A private source repo needs a read token in the MM_SOURCE_TOKEN secret.
+  MM_SOURCE_REPO: Dominic-Shirazi/OpenClaw_Screen_Driver
+  MM_SOURCE_REF: main
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the pull request
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check out Muscle Memory (the checks)
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.MM_SOURCE_REPO }}
+          ref: ${{ env.MM_SOURCE_REF }}
+          path: .mm
+          token: ${{ secrets.MM_SOURCE_TOKEN || github.token }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install what the hub checks need
+        # The hub checks use only these; the full app (screen capture, OCR, Qt) is not needed here.
+        # Alternative: pip install "git+https://github.com/${MM_SOURCE_REPO}@${MM_SOURCE_REF}"
+        run: pip install "cryptography>=42" "pyyaml>=6" "python-dotenv>=1" "networkx>=3" "keyring>=25"
+
+      - name: List the changed files
+        run: git diff --name-only "origin/${{ github.base_ref }}...HEAD" > "$RUNNER_TEMP/changed.txt"
+
+      - name: Review the package folders
+        id: review
+        continue-on-error: true
+        env:
+          PYTHONPATH: .mm
+          MM_HOME: ${{ runner.temp }}/mm
+        run: python -m hub.repo review . --changed "$RUNNER_TEMP/changed.txt" --report "$RUNNER_TEMP/review.md"
+
+      - name: Post the result
+        if: always()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cat "$RUNNER_TEMP/review.md" >> "$GITHUB_STEP_SUMMARY"
+          gh pr comment "${{ github.event.pull_request.number }}" --repo "${{ github.repository }}" \
+            --body-file "$RUNNER_TEMP/review.md"
+
+      - name: Fail when a check failed
+        if: steps.review.outcome == 'failure'
+        run: exit 1

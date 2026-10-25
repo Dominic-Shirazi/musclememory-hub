@@ -1,0 +1,73 @@
+# On every push to main (a merged pull request): move accepted submissions into packages/,
+# rebuild index.json, sign it with the hub key (the HUB_SIGNING_KEY secret), commit that back,
+# and deploy the browse page, the index and the package files to GitHub Pages.
+# If any package under packages/ fails its checks, nothing is deployed and the live site stays as it was.
+name: publish
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  MM_SOURCE_REPO: Dominic-Shirazi/OpenClaw_Screen_Driver
+  MM_SOURCE_REF: main
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - name: Check out the hub
+        uses: actions/checkout@v4
+
+      - name: Check out Muscle Memory (the publish steps)
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.MM_SOURCE_REPO }}
+          ref: ${{ env.MM_SOURCE_REF }}
+          path: .mm
+          token: ${{ secrets.MM_SOURCE_TOKEN || github.token }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install what the hub steps need
+        run: pip install "cryptography>=42" "pyyaml>=6" "python-dotenv>=1" "networkx>=3" "keyring>=25"
+
+      - name: Accept merged submissions, rebuild and sign the index, assemble the site
+        env:
+          PYTHONPATH: .mm
+          MM_HOME: ${{ runner.temp }}/mm
+          HUB_SIGNING_KEY: ${{ secrets.HUB_SIGNING_KEY }}
+        run: python -m hub.repo publish . --site "$RUNNER_TEMP/site"
+
+      - name: Commit the moved packages and the new index
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A -- packages submissions index.json
+          for f in index.sig hub_root.pub; do [ -f "$f" ] && git add -- "$f"; done
+          git diff --cached --quiet || { git commit -m "publish: accept submissions, rebuild the index"; git push; }
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ runner.temp }}/site
+
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4

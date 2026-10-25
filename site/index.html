@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Muscle Memory Hub</title>
+  <meta name="description" content="Routines, menu maps, site maps and API records for Muscle Memory, signed by their authors.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <h1>Muscle Memory Hub</h1>
+      <p class="lede">Maps other people already made: routines, menu catalogues, site maps and API records.
+        Pull one with <code>musclememory hub pull &lt;id&gt;</code> or ask your agent.</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <form class="filters" role="search" onsubmit="return false">
+      <label class="grow">
+        <span class="sr">Search</span>
+        <input id="q" type="search" placeholder="Search a program, site or task" autocomplete="off">
+      </label>
+      <label>
+        <span class="sr">Kind</span>
+        <select id="kind">
+          <option value="">All kinds</option>
+          <option value="routine">Routines</option>
+          <option value="catalogue">Menu maps</option>
+          <option value="site">Site maps</option>
+          <option value="api">API records</option>
+        </select>
+      </label>
+    </form>
+
+    <p id="status" class="status" aria-live="polite">Loading the index...</p>
+    <ul id="list" class="list"></ul>
+  </main>
+
+  <footer class="wrap foot">
+    <p id="meta"></p>
+    <p>Every package is signed by its author and <a href="index.json">index.json</a> by this hub
+      (<a href="index.sig">index.sig</a>, key in <a href="hub_root.pub">hub_root.pub</a>).
+      Muscle Memory checks both, and every file's sha256, before it installs anything.</p>
+  </footer>
+
+  <template id="card">
+    <li class="card">
+      <div class="head">
+        <h2 class="name"></h2>
+        <span class="kind"></span>
+      </div>
+      <p class="summary"></p>
+      <dl class="facts">
+        <div><dt>Package</dt><dd class="id"></dd></div>
+        <div><dt>Version</dt><dd><select class="ver" aria-label="Version"></select></dd></div>
+        <div><dt>For</dt><dd class="target"></dd></div>
+        <div><dt>Platform</dt><dd class="os"></dd></div>
+        <div><dt>Author</dt><dd class="author"></dd></div>
+      </dl>
+      <div class="pull">
+        <code class="cmd"></code>
+        <button type="button" class="copy">Copy</button>
+      </div>
+      <details class="files">
+        <summary>Files</summary>
+        <ul class="filelist"></ul>
+      </details>
+    </li>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
